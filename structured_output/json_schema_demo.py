@@ -1,22 +1,51 @@
-
-from langchain_openai import ChatOpenAI
-from pydantic import Field
-from pydantic import BaseModel
+from typing import Literal
 from typing import Optional
+from typing import TypedDict, Annotated
+from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 load_dotenv()
 
 model = ChatOpenAI(model = "gpt-4.1-mini")
 
-class Review(BaseModel):
-    name: str = "vishwas"
-    age: Optional[int] = None
-    summary: str = Field(description="Summary of the review", default="A short summary of the review")
-    rating: float = Field(gt=0, lt = 5, description="Rate the rating of person")
+# schema
 
+schema = {
+    "title": "Review", 
+    "type": "object",
+    "properties": {
+        "summary" : {
+            "description": "A short summary of the review",
+            "type": "string",
+        },
+        "sentiment" : {
+            "description": "The sentiment of the review",
+            "type": "string",
+            "enum": ["positive", "negative", "neutral"]
+        },
+        "author" : {
+            "description": "The name of the reviewer",
+            "type": ["string", "null"]
+        },
+        "rating" : {
+            "type": ["number", "null"],
+            "description": "The rating of the review from 1 to 5"
+        },
+        "pros" : {
+            "type" : ["array", "null"],
+            "items": {
+                "type": "string",
+            },
+            "description" : "Pros of the review"
+        },
+        "cons" : {
+            "type" : ["string", "null"],
+            "description" : "Cons of the review"
+        },
+    },
+    "required": ["summary", "sentiment", "rating"]
+}
 
-
-stuctured_model = model.with_structured_output(Review)
+stuctured_model = model.with_structured_output(schema)
 
 response = stuctured_model.invoke("""Apple iPhone 17 Pro Review Insights
 Apple's major unibody redesign has drawn a lot of attention for its bold looks and daily practicality:
@@ -32,7 +61,11 @@ Durability Warning: Because aluminum is softer than titanium, caseless users not
 Head-to-Head Comparison
 To help you decide between these two premium flagships, here is how they stack up directly across key attributes:""")
 
-print("name: ", response.name)
-print("summary: ", response.summary)
-print("age: ", response.age)
-print("rating: ", response.rating)
+print('summary: ', response['summary'])
+print('sentiment: ',response['sentiment'])
+print('author: ',response['author'])
+print('rating: ', response['rating'])
+print('pros: ',response['pros'])
+print('cons: ',response['cons'])
+
+print(response)
