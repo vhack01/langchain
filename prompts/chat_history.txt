@@ -1,0 +1,6 @@
+HumanMessage(content="I want my refund")
+AIMessage(content="I am sorry to hear that you want a refund. Could you please provide the reason for the refund?")
+HumanMessage(content="The product is damaged")
+AIMessage(content="Sure, I can help you with that. Could you please provide the order number?")
+HumanMessage(content="# 1234")
+AIMessage(content="""I’ve initiated the refund process for your damaged product, order #1234. You can expect the amount to be credited back to your original payment method within 3–5 business days. Is there anything else I can help you with today?""")
